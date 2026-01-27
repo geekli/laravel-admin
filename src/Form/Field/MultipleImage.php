@@ -18,7 +18,7 @@ class MultipleImage extends MultipleFile
      *
      * @var string
      */
-    protected $rules = 'image';
+    protected $rules = 'mimes:jpeg,jpg,png,gif,svg,webp,avif';
 
     /**
      * Prepare for each file.
