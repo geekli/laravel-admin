@@ -462,6 +462,10 @@ class Admin
         if ($user && $user->id == 1) {
             return true;
         }
+        // administrator 角色且拥有 All permission（*）→ 显示全部菜单
+        if ($user && $user->isRole('administrator') && $this->userHasAllPermission($user)) {
+            return true;
+        }
         //安全提取角色 ID（兼容 Eloquent 模型）
         $menuRoles = $item['roles'] ?? [];
         $menuRoleIds = collect($menuRoles)->pluck('id')->filter()->toArray();
@@ -492,6 +496,16 @@ class Admin
         }
         $result = $passesRole || $passesPermission;
         return $result;
+    }
+
+    /**
+     * 是否实际拥有 All permission（slug=*），不依赖 isAdministrator 对 can() 的短路。
+     *
+     * @param mixed $user
+     */
+    protected function userHasAllPermission($user): bool
+    {
+        return $user->allPermissions()->pluck('slug')->contains('*');
     }
 
     /**
